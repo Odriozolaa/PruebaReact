@@ -21,7 +21,7 @@ services:
     depends_on:
       - db  # El backend depende de la base de datos
     environment:
-      - DATABASE_URL=postgresql://josuejo17:Jbrasil#174.@pruebadb.c1gi02ka0plo.us-east-2.rds.amazonaws.com:5432/myappdb
+      - DATABASE_URL=postgresql://myuser:mypassword@db:5432/mydatabase
 
 volumes:
   postgres_data:
