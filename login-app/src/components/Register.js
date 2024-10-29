@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { register } from '../services/authService';
+import { TextField, Button } from '@mui/material';
+import FormContainer from './FormContainer';
 
 function Register() {
 const [email, setEmail] = useState('');
@@ -24,30 +26,30 @@ const handleSubmit = async (event) => {
     }
 };
 return (
-        <form onSubmit={handleSubmit}>
-        <h2>Register</h2>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
-        {success && <p style={{ color: 'green' }}>{success}</p>}
-        <div>
-            <label>Email:</label>
-            <input
-                type="email"
+        <FormContainer title="Register" error={error} success={success} onSubmit={handleSubmit}>
+            <TextField
+                label="Email"
+                variant="outlined"
+                fullWidth
+                margin="normal"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
             />
-        </div>
-        <div>
-            <label>Password:</label>
-            <input
+            <TextField
+                label="Password"
+                variant="outlined"
+                fullWidth
+                margin="normal"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                />
-            </div>
-            <button type="submit">Register</button>
-        </form>
+            />
+            <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 2 }}>
+                Register
+            </Button>
+        </FormContainer>
     );
 }
 

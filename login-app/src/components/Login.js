@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../services/authService';
+import { TextField, Button } from '@mui/material';
+import FormContainer from './FormContainer';
+
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -20,30 +23,31 @@ function Login() {
             setError(err.message);
         }
     };
-    return (
-        <form onSubmit={handleSubmit}>
-            <h2>Login</h2>
-            {error && <p style={{ color: 'red' }}>{error}</p>}
-            <div>
-                <label>Email:</label>
-                <input
-                    type="email"
+return (
+        <FormContainer title="Login" error={error} onSubmit={handleSubmit}>
+                <TextField
+                    label="Email"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
-            </div>
-            <div>
-                <label>Password:</label>
-                <input
+                <TextField
+                    label="Password"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
-            </div>
-            <button type="submit">Login</button>
-        </form>
+                <Button type="submit" fullWidth variant="contained" color="primary" sx={{ mt: 2 }}>
+                    Login
+                </Button>
+        </FormContainer>
     );
 }
 
