@@ -1,13 +1,14 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from models import Alumno # Cambiado
+from models import Alumno, User # Cambiado
 from database import get_db
 from schemas.alumno_schemas import AlumnoCreate
+from auth import get_current_user
 
 router = APIRouter()
 
 # Endpoints protegidos para alumnos
-@router.post("/alumnos/", response_model=AlumnoCreate)
+@router.post("/", response_model=AlumnoCreate)
 def create_alumno(alumno: AlumnoCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     db_alumno = Alumno(
         nombre=alumno.nombre,

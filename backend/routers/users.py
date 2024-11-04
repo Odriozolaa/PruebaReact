@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import User # Cambiado
+from models import User 
 from database import get_db
 from schemas.user_schemas import UserCreate, UserLogin, Token
 from datetime import timedelta
 import bcrypt  # Importa bcrypt para hashear las contraseñas
+from auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
 
 router = APIRouter()
 
