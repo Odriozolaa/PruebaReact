@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, HTTPBearer, HTTPAuthorizationCredentials
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
-from models import User  # Cambiado
-from database import get_db, engine  # Cambiado
+from models import User, Grado, Alumno, Salon, Maestro, Horario  # Cambiado
+from database import get_db, engine 
+from typing import Optional # Cambiado
 import bcrypt  # Importa bcrypt para hashear las contraseñas
 from jose import JWTError, jwt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -40,6 +41,43 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class GradoCreate(BaseModel):
+    nombre: str
+    cantidad_alumnos: int
+
+class AlumnoCreate(BaseModel):
+    nombre: str
+    es_nuevo: bool
+    restricciones_no_juntos: str = None
+    problemas_comportamiento_con: str = None
+    relaciones_romanticas_con: str = None
+    grado_id: int
+
+class SalonCreate(BaseModel):
+    nombre: str
+    capacidad: int
+
+class MaestroCreate(BaseModel):
+    nombre: str
+    materia: str
+
+class HorarioCreate(BaseModel):
+    dia: str
+    hora_inicio: str
+    hora_fin: str
+    grado_id: int
+    maestro_id: int
+    class Config:
+        from_attributes = True
+
+# Modelo de respuesta
+class HorarioResponse(BaseModel):
+    dia: str
+    hora_inicio: str
+    hora_fin: str
+    grado_id: int
+    maestro_id: int
 
 def create_access_token(data: dict, expires_delta: timedelta = None):
     to_encode = data.copy()
@@ -108,6 +146,74 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 
     return {"access_token": access_token, "token_type": "bearer"}
 
+@app.post("/grados/", response_model=GradoCreate)
+def create_grado(grado: GradoCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    db_grado = Grado(nombre=grado.nombre, cantidad_alumnos=grado.cantidad_alumnos)
+    db.add(db_grado)
+    db.commit()
+    db.refresh(db_grado)
+    return db_grado
+
+# Endpoints protegidos para alumnos
+@app.post("/alumnos/", response_model=AlumnoCreate)
+def create_alumno(alumno: AlumnoCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    db_alumno = Alumno(
+        nombre=alumno.nombre,
+        es_nuevo=alumno.es_nuevo,
+        restricciones_no_juntos=alumno.restricciones_no_juntos,
+        problemas_comportamiento_con=alumno.problemas_comportamiento_con,
+        relaciones_romanticas_con=alumno.relaciones_romanticas_con,
+        grado_id=alumno.grado_id
+    )
+    db.add(db_alumno)
+    db.commit()
+    db.refresh(db_alumno)
+    return db_alumno
+
+# Endpoints protegidos para salones
+@app.post("/salones/", response_model=SalonCreate)
+def create_salon(salon: SalonCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    db_salon = Salon(nombre=salon.nombre, capacidad=salon.capacidad)
+    db.add(db_salon)
+    db.commit()
+    db.refresh(db_salon)
+    return db_salon
+
+# Endpoints protegidos para maestros
+@app.post("/maestros/", response_model=MaestroCreate)
+def create_maestro(maestro: MaestroCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    db_maestro = Maestro(nombre=maestro.nombre, materia=maestro.materia)
+    db.add(db_maestro)
+    db.commit()
+    db.refresh(db_maestro)
+    return db_maestro
+
+# Endpoints protegidos para horarios
+@app.post("/horarios/", response_model=HorarioResponse)
+def create_horario(horario: HorarioCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    # Convertir las horas a formato de tiempo para almacenarlas en la base de datos
+    hora_inicio = datetime.strptime(horario.hora_inicio, "%H:%M").time()
+    hora_fin = datetime.strptime(horario.hora_fin, "%H:%M").time()
+    
+    db_horario = Horario(
+        dia=horario.dia,
+        hora_inicio=hora_inicio,
+        hora_fin=hora_fin,
+        grado_id=horario.grado_id,
+        maestro_id=horario.maestro_id
+    )
+    db.add(db_horario)
+    db.commit()
+    db.refresh(db_horario)
+
+    # Retornar los tiempos en formato de cadena en la respuesta
+    return HorarioResponse(
+        dia=db_horario.dia,
+        hora_inicio=db_horario.hora_inicio.strftime("%H:%M"),
+        hora_fin=db_horario.hora_fin.strftime("%H:%M"),
+        grado_id=db_horario.grado_id,
+        maestro_id=db_horario.maestro_id
+    )
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8080)
