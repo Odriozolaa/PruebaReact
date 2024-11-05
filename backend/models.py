@@ -1,6 +1,25 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Time
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Text, Time, Table
 from sqlalchemy.orm import relationship
 from database import Base
+
+
+restricciones_no_juntos = Table(
+    'restricciones_no_juntos', Base.metadata,
+    Column('alumno_id', Integer, ForeignKey('alumnos.id'), primary_key=True),
+    Column('restriccion_id', Integer, ForeignKey('alumnos.id'), primary_key=True)
+)
+
+problemas_comportamiento_con = Table(
+    'problemas_comportamiento_con', Base.metadata,
+    Column('alumno_id', Integer, ForeignKey('alumnos.id'), primary_key=True),
+    Column('problema_id', Integer, ForeignKey('alumnos.id'), primary_key=True)
+)
+
+relaciones_romanticas_con = Table(
+    'relaciones_romanticas_con', Base.metadata,
+    Column('alumno_id', Integer, ForeignKey('alumnos.id'), primary_key=True),
+    Column('relacion_id', Integer, ForeignKey('alumnos.id'), primary_key=True)
+)
 
 class User(Base):
     __tablename__ = "users"
@@ -26,12 +45,34 @@ class Alumno(Base):
     nombre = Column(String, index=True)
     grado_id = Column(Integer, ForeignKey("grados.id"))
     es_nuevo = Column(Boolean, default=False)
-    restricciones_no_juntos = Column(Text, nullable=True)
-    problemas_comportamiento_con = Column(Text, nullable=True)
-    relaciones_romanticas_con = Column(Text, nullable=True)
 
     # Relación con grados
     grado = relationship("Grado", back_populates="alumnos")
+
+    # Relaciones muchos-a-muchos con otros alumnos
+    restricciones_no_juntos = relationship(
+        "Alumno",
+        secondary=restricciones_no_juntos,
+        primaryjoin=id == restricciones_no_juntos.c.alumno_id,
+        secondaryjoin=id == restricciones_no_juntos.c.restriccion_id,
+        backref="restricciones"
+    )
+
+    problemas_comportamiento_con = relationship(
+        "Alumno",
+        secondary=problemas_comportamiento_con,
+        primaryjoin=id == problemas_comportamiento_con.c.alumno_id,
+        secondaryjoin=id == problemas_comportamiento_con.c.problema_id,
+        backref="problemas"
+    )
+
+    relaciones_romanticas_con = relationship(
+        "Alumno",
+        secondary=relaciones_romanticas_con,
+        primaryjoin=id == relaciones_romanticas_con.c.alumno_id,
+        secondaryjoin=id == relaciones_romanticas_con.c.relacion_id,
+        backref="romances"
+    )
 
 
 class Salon(Base):

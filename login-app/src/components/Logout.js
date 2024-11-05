@@ -1,21 +1,23 @@
 // src/components/Logout.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../services/authService';  // Importa la función de logout
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from '@mui/material';
 
-const Logout = () => {
+function Logout() {
+    const { logout } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        logout();  // Eliminar el token del localStorage
-        navigate('/login');  // Redirigir al login después de cerrar sesión
+        logout();
+        navigate('/login');
     };
 
     return (
-        <button onClick={handleLogout} style={{ marginTop: "20px" }}>
-        Cerrar sesión
-        </button>
+        <Button color="inherit" onClick={handleLogout}>
+            Logout
+        </Button>
     );
-};
+}
 
 export default Logout;

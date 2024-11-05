@@ -1,9 +1,16 @@
 from pydantic import BaseModel
+from typing import List, Optional
 
 class AlumnoCreate(BaseModel):
     nombre: str
-    es_nuevo: bool
-    restricciones_no_juntos: str = None
-    problemas_comportamiento_con: str = None
-    relaciones_romanticas_con: str = None
     grado_id: int
+    es_nuevo: Optional[bool] = False
+    restricciones_no_juntos: Optional[List[int]] = []
+    problemas_comportamiento_con: Optional[List[int]] = []
+    relaciones_romanticas_con: Optional[List[int]] = []
+
+class AlumnoResponse(AlumnoCreate):
+    id: int
+
+    class Config:
+        from_attributes = True

@@ -6,7 +6,6 @@ import { getGrados } from '../services/gradoService';
 
 function AlumnoForm({ onSubmit }) {
     const [nombre, setNombre] = useState('');
-    const [esNuevo, setEsNuevo] = useState(false);
     const [gradoId, setGradoId] = useState('');
     const [grados, setGrados] = useState([]);
 
@@ -22,7 +21,6 @@ function AlumnoForm({ onSubmit }) {
         event.preventDefault();
         onSubmit({
             nombre,
-            esNuevo,
             grado_id: gradoId,
         });
     };

@@ -14,3 +14,8 @@ def create_grado(grado: GradoCreate, db: Session = Depends(get_db), current_user
     db.commit()
     db.refresh(db_grado)
     return db_grado
+
+# Endpoint para obtener todos los grados
+@router.get("/", response_model=list[GradoCreate])
+def get_grados(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return db.query(Grado).all()
