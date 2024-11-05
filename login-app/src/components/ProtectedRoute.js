@@ -12,9 +12,10 @@ const ProtectedRoute = ({ children }) => {
 
     return (
         <div>
+          <h1>Esta es una página protegida. Solo puedes verla si has iniciado sesión.</h1>
           {/* Mostrar el contenido protegido */}
             {children}
-    
+          
           {/* Botón de Logout */}
             <Logout />  {/* Reutilizar el componente de Logout */}
         </div>
