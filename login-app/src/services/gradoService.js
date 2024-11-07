@@ -15,10 +15,16 @@ export const createGrado = async (token, data) => {
     return await response.json();
 };
 // src/services/gradoService.js
-export async function getGrados() {
-    const response = await fetch('/api/grados'); // Ajusta el endpoint si es necesario
+export const getGrados = async (token) => {
+    const response = await fetch(`${API_URL}/`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // Aquí va el token
+        },
+    });
     if (!response.ok) {
-        throw new Error('Failed to fetch grados');
+        throw new Error("Error al obtener los grados");
     }
-    return response.json();
-}
+    return await response.json();
+};

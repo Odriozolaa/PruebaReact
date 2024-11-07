@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";  // Cambia esto si despliegas el backend
+const API_URL = "http://localhost:8000/users";  // Cambia esto si despliegas el backend
 
 // Registrar un nuevo usuario
 export const register = async (email, password) => {
@@ -43,7 +43,7 @@ export const getCurrentUser = async () => {
         throw new Error("No hay token disponible");
     }
 
-    const response = await fetch(`${API_URL}/users/me`, {
+    const response = await fetch(`${API_URL}/me`, {
         method: "GET",
         headers: {
         "Authorization": `Bearer ${token}`,

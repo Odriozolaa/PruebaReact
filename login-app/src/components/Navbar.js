@@ -30,6 +30,7 @@ function Navbar() {
                         <>
                             <Button color="inherit" component={Link} to="/grado">Grado</Button>
                             <Button color="inherit" component={Link} to="/alumno">Alumno</Button>
+                            <Button color="inherit" component={Link} to="/detallesa">Detalles</Button>
                             <Button color="inherit" component={Link} to="/salon">Salon</Button>
                             <Button color="inherit" component={Link} to="/maestro">Maestro</Button>
                             <Button color="inherit" component={Link} to="/horario">Horario</Button>

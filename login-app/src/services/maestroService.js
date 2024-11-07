@@ -15,10 +15,16 @@ export const createMaestro = async (token, data) => {
     return await response.json();
 };
 // src/services/maestroService.js
-export async function getMaestros() {
-    const response = await fetch('/api/maestros'); // Ajusta el endpoint si es necesario
+export async function getMaestros(token) {
+    const response = await fetch(`${API_URL}/`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`, // Token de autorización
+        }
+    });
     if (!response.ok) {
-        throw new Error('Failed to fetch maestros');
+        throw new Error("Failed to fetch maestros");
     }
-    return response.json();
+    return await response.json();
 }

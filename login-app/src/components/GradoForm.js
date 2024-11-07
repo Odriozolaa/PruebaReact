@@ -1,21 +1,34 @@
 // src/components/GradoForm.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createGrado } from '../services/gradoService';
 import { TextField, Button } from '@mui/material';
+import { useAuth } from '../contexts/AuthContext';
 import FormContainer from './FormContainer';
 
 function GradoForm() {
     const [nombre, setNombre] = useState('');
     const [cantidadAlumnos, setCantidadAlumnos] = useState('');
     const [error, setError] = useState('');
+    const { token } = useAuth(); 
     const navigate = useNavigate();
+    
+    useEffect(() => {
+        if (!token) {
+            navigate("/login");
+        }
+    }, [token, navigate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if (!token) {
+            setError('Debes iniciar sesión para crear un grado');
+            return;
+        }
+
         try {
-            await createGrado({ nombre, cantidad_alumnos: cantidadAlumnos });
-            navigate('/grados');
+            await createGrado(token, { nombre, cantidad_alumnos: cantidadAlumnos });
+            navigate('/'); // Cambia el destino si es necesario
         } catch (err) {
             setError('Error al crear el grado. Inténtalo de nuevo.');
         }

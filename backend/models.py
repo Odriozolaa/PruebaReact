@@ -46,6 +46,11 @@ class Alumno(Base):
     grado_id = Column(Integer, ForeignKey("grados.id"))
     es_nuevo = Column(Boolean, default=False)
 
+    # Columnas de texto para las relaciones
+    restricciones_no_juntos_text = Column(String, nullable=True)
+    problemas_comportamiento_con_text = Column(String, nullable=True)
+    relaciones_romanticas_con_text = Column(String, nullable=True)
+
     # Relación con grados
     grado = relationship("Grado", back_populates="alumnos")
 
@@ -73,6 +78,7 @@ class Alumno(Base):
         secondaryjoin=id == relaciones_romanticas_con.c.relacion_id,
         backref="romances"
     )
+
 
 
 class Salon(Base):

@@ -5,7 +5,7 @@ from database import get_db
 from schemas.user_schemas import UserCreate, UserLogin, Token
 from datetime import timedelta
 import bcrypt  # Importa bcrypt para hashear las contraseñas
-from auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token
+from auth import ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_user
 
 router = APIRouter()
 
@@ -35,3 +35,6 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 
     return {"access_token": access_token, "token_type": "bearer"}
 
+@router.get("/me", response_model=UserCreate)
+def read_users_me(current_user: User = Depends(get_current_user)):
+    return {"email": current_user.email}
