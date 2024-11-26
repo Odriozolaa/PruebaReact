@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import Alumno, User # Cambiado
+from models import Alumno, User, Grado # Cambiado
 from database import get_db
 from schemas.alumno_schemas import AlumnoCreate, AlumnoResponse, AlumnoUpdate
 from auth import get_current_user
@@ -36,10 +36,19 @@ def create_alumno(alumno: AlumnoCreate, db: Session = Depends(get_db), current_u
     return db_alumno
 
 # Obtener alumnos por grado
+
 @router.get("/grado/{grado_id}", response_model=List[AlumnoResponse])
-def get_alumnos_by_grado(grado_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_alumnos_by_grado(grado_id: int, db: Session = Depends(get_db)):
     alumnos = db.query(Alumno).filter(Alumno.grado_id == grado_id).all()
+    
+    # Convertir las relaciones a listas de IDs
+    for alumno in alumnos:
+        alumno.restricciones_no_juntos = [a.id for a in alumno.restricciones_no_juntos]
+        alumno.problemas_comportamiento_con = [a.id for a in alumno.problemas_comportamiento_con]
+        alumno.relaciones_romanticas_con = [a.id for a in alumno.relaciones_romanticas_con]
+    
     return alumnos
+
 
 @router.put("/{alumno_id}", response_model=AlumnoResponse)
 def update_alumno(

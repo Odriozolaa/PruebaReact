@@ -3,7 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import engine 
 from models import Base
 from routers import users, grados, alumnos, salones, maestros, horarios
+from utils import inicializar_grados_predeterminados
 import logging
+from sqlalchemy.orm import Session
 
 logging.basicConfig(level=logging.DEBUG)
 

@@ -19,3 +19,8 @@ def create_grado(grado: GradoCreate, db: Session = Depends(get_db), current_user
 @router.get("/", response_model=list[GradoCreate])
 def get_grados(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return db.query(Grado).all()
+
+from sqlalchemy.orm import Session
+from models import Grado
+
+

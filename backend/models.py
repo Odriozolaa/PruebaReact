@@ -27,6 +27,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String)
+    
 class Grado(Base):
     __tablename__ = "grados"
 
@@ -36,6 +37,7 @@ class Grado(Base):
 
     # Relación con alumnos
     alumnos = relationship("Alumno", back_populates="grado")
+    salones = relationship("Salon", back_populates="grado")
 
 
 class Alumno(Base):
@@ -78,16 +80,22 @@ class Alumno(Base):
         secondaryjoin=id == relaciones_romanticas_con.c.relacion_id,
         backref="romances"
     )
+    salon_id = Column(Integer, ForeignKey("salones.id"))
+    salon = relationship("Salon", back_populates="alumnos")
+    
 
 
 
 class Salon(Base):
     __tablename__ = "salones"
-
+    
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String, unique=True, index=True)
-    capacidad = Column(Integer)
-
+    nombre = Column(String, index=True)
+    grado_id = Column(Integer, ForeignKey("grados.id"))
+    capacidad = Column(Integer, nullable=False)
+    # Relación con grados y alumnos
+    grado = relationship("Grado", back_populates="salones")
+    alumnos = relationship("Alumno", back_populates="salon")
 
 class Maestro(Base):
     __tablename__ = "maestros"
